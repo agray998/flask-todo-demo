@@ -12,11 +12,14 @@ def home():
 @app.route('/search=<keyword>')
 def search(keyword):
     data = db.session.execute(f"SELECT * FROM todo WHERE desc LIKE '%{keyword}%'")
-    return '<br>'.join([str(res) for res in data])
+    data = list(data)
+    num_results = len(data)
+    return render_template('search.html', res = [str(res) for res in data], n = num_results)
 
 @app.route('/done')
 def done():
-    return '<br>'.join(str(t) for t in Todo.query.filter_by(status='done').order_by(Todo.title.desc()).all())
+    res = [str(t) for t in Todo.query.filter_by(status='done').order_by(Todo.title.desc()).all()]
+    return render_template('done.html', res = res)
 
 @app.route('/create/<int:pnum>/<title>/<desc>')
 def create(pnum, title, desc):
