@@ -1,0 +1,13 @@
+{% extends 'layout.html' %}
+{% block body %}
+        <h2>Home</h2>
+        {% if num == 0 %}
+        <p>You have nothing to do!</p>
+        {% else %}
+        <p>You have {{ num }} items todo!</p>
+        {% endif %}
+        {% for todo in todos %}
+        {{ todo }}
+        <br>
+        {% endfor %}
+{% endblock body %}
