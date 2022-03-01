@@ -1,11 +1,13 @@
-from flask import redirect, url_for
+from flask import redirect, url_for, render_template
 from application import app, db
 from application.models import Todo, Project
 from datetime import date, timedelta
 
 @app.route('/')
 def home():
-    return f"{Todo.query.count()} todos: " + '<br>'.join(str(t) + " " + str(t.project) for t in Todo.query.all())
+    num_todos = Todo.query.count()
+    todos = [str(todo) + " " + str(todo.project) for todo in Todo.query.all()]
+    return render_template('index.html', num = num_todos, todos = todos)
 
 @app.route('/search=<keyword>')
 def search(keyword):
