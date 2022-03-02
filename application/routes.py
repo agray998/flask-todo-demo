@@ -24,39 +24,57 @@ def done():
 
 @app.route('/create-todo', methods=['GET', 'POST'])
 def create():
+    message = None
+    projects = Project.query.all()
     form = AddToDo()
+    form.proj_id.choices.extend([(project.pk, str(project)) for project in projects])
     if request.method == 'POST':
+        if not form.validate_on_submit():
+            message = "Task name cannot be blank"
+            return render_template('add_todo.html', form = form, ptitle = "Add Item", message = message)
         title = form.title.data
         desc = form.desc.data
         status = form.status.data
-        proj = form.proj_id.data
+        proj = int(form.proj_id.data)
         new_todo = Todo(title = title, status = status, desc = desc, proj_id = proj)
         db.session.add(new_todo)
         db.session.commit()
         return redirect(url_for('home'))
-    return render_template('add_todo.html', form = form, ptitle = "Add Item")
+    return render_template('add_todo.html', form = form, ptitle = "Add Item", message = message)
 
 @app.route('/create-proj', methods=['GET', 'POST'])
 def create_project():
+    message = None
     form = AddProject()
     if request.method == 'POST':
+        if not form.validate_on_submit():
+            message = ""
+            for field in ['name', 'due']:
+                try:
+                    err = eval(f"form.{field}.errors[-1]")
+                except IndexError:
+                    err = ""
+                message += err + ", "
+            return render_template('add_proj.html', form = form, message = message)
         name = form.name.data
         date = form.due.data
         new_proj= Project(project_name = name, due_date = date)
         db.session.add(new_proj)
         db.session.commit()
         return redirect(url_for('home'))
-    return render_template('add_proj.html', form = form)
+    return render_template('add_proj.html', form = form, message = message)
 
 @app.route('/update/<int:pk>', methods=['GET', 'POST'])
 def update(pk):
     todo = Todo.query.get(pk)
+    projects = Project.query.all()
     form = AddToDo()
+    form.proj_id.choices.extend([(project.pk, str(project)) for project in projects])
     if request.method == 'POST':
         todo.title = form.title.data
         todo.desc = form.desc.data
         todo.status = form.status.data
-        todo.proj_id = form.proj_id.data
+        todo.proj_id = int(form.proj_id.data)
         db.session.commit()
         return redirect(url_for('home'))
     return render_template('add_todo.html', form = form, ptitle = "Update Item")
