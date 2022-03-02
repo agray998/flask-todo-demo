@@ -1,6 +1,7 @@
-from flask import redirect, url_for, render_template
+from flask import redirect, url_for, render_template, request
 from application import app, db
 from application.models import Todo, Project
+from application.forms import AddToDo
 from datetime import date, timedelta
 
 @app.route('/')
@@ -21,12 +22,19 @@ def done():
     res = [str(t) for t in Todo.query.filter_by(status='done').order_by(Todo.title.desc()).all()]
     return render_template('done.html', res = res)
 
-@app.route('/create/<int:pnum>/<title>/<desc>')
-def create(pnum, title, desc):
-    todo = Todo(title=title, desc=desc, status='todo', proj_id = pnum)
-    db.session.add(todo)
-    db.session.commit()
-    return redirect(url_for('home'))
+@app.route('/create-todo', methods=['GET', 'POST'])
+def create():
+    form = AddToDo()
+    if request.method == 'POST':
+        title = form.title.data
+        desc = form.desc.data
+        status = form.status.data
+        proj = form.proj_id.data
+        new_todo = Todo(title = title, status = status, desc = desc, proj_id = proj)
+        db.session.add(new_todo)
+        db.session.commit()
+        return redirect(url_for('home'))
+    return render_template('add_todo.html', form = form)
 
 @app.route('/create-proj/<name>')
 def create_project(name):
