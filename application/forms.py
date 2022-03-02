@@ -7,3 +7,8 @@ class AddToDo(FlaskForm):
     status = SelectField("Status", choices=[('todo', 'todo'), ('done', 'done')])
     proj_id = IntegerField("Project to Link")
     submit = SubmitField("Add Item")
+
+class AddProject(FlaskForm):
+    name = StringField("Project Name")
+    due = DateField("Due Date")
+    submit = SubmitField("Add Project")

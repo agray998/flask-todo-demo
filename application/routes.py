@@ -1,13 +1,13 @@
 from flask import redirect, url_for, render_template, request
 from application import app, db
 from application.models import Todo, Project
-from application.forms import AddToDo
-from datetime import date, timedelta
+from application.forms import AddToDo, AddProject
+# from datetime import date, timedelta
 
 @app.route('/')
 def home():
     num_todos = Todo.query.count()
-    todos = [str(todo) + " " + str(todo.project) for todo in Todo.query.all()]
+    todos = Todo.query.all()
     return render_template('index.html', num = num_todos, todos = todos)
 
 @app.route('/search=<keyword>')
@@ -34,24 +34,32 @@ def create():
         db.session.add(new_todo)
         db.session.commit()
         return redirect(url_for('home'))
-    return render_template('add_todo.html', form = form)
+    return render_template('add_todo.html', form = form, ptitle = "Add Item")
 
-@app.route('/create-proj/<name>')
-def create_project(name):
-    new_proj = Project(project_name = name, due_date = date.today() + timedelta(30))
-    db.session.add(new_proj)
-    db.session.commit(),
-    return redirect(url_for('home'))
+@app.route('/create-proj', methods=['GET', 'POST'])
+def create_project():
+    form = AddProject()
+    if request.method == 'POST':
+        name = form.name.data
+        date = form.due.data
+        new_proj= Project(project_name = name, due_date = date)
+        db.session.add(new_proj)
+        db.session.commit()
+        return redirect(url_for('home'))
+    return render_template('add_proj.html', form = form)
 
-@app.route('/update/<int:pk>/<newstatus>')
-@app.route('/update/<int:pk>/<newtitle>/<newstatus>')
-def update(pk, newstatus, newtitle = None): # defining multiple routes and setting default val in function def allows the user to either update just the status, or update the task description and status
+@app.route('/update/<int:pk>', methods=['GET', 'POST'])
+def update(pk):
     todo = Todo.query.get(pk)
-    if newtitle:
-        todo.title = newtitle
-    todo.status = newstatus
-    db.session.commit()
-    return redirect(url_for('home'))
+    form = AddToDo()
+    if request.method == 'POST':
+        todo.title = form.title.data
+        todo.desc = form.desc.data
+        todo.status = form.status.data
+        todo.proj_id = form.proj_id.data
+        db.session.commit()
+        return redirect(url_for('home'))
+    return render_template('add_todo.html', form = form, ptitle = "Update Item")
 
 @app.route('/delete/<int:i>')
 def delete(i):
