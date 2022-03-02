@@ -7,7 +7,7 @@
         <p>You have {{ num }} items todo!</p>
         {% endif %}
         {% for todo in todos %}
-        {{ todo }}
+        {{ todo.__str__() + " " + todo.project.__str__() }}    <a href="{{ url_for('update', pk=todo.pk) }}">Update Item</a>
         <br>
         {% endfor %}
 {% endblock body %}
