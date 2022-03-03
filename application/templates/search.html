@@ -1,0 +1,11 @@
+{% extends 'layout.html' %}
+{% block body %}
+        {% if n == 0 %}
+        <p>No results match that search!</p>
+        {% else %}
+        {% for r in res %}
+        {{ r }}
+        <br>
+        {% endfor %}
+        {% endif %}
+{% endblock body %}
