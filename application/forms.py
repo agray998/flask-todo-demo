@@ -29,5 +29,5 @@ class AddToDo(FlaskForm):
 
 class AddProject(FlaskForm):
     name = StringField("Project Name", validators=[NameCheck()])
-    due = DateField("Due Date", validators = [DateCheck()])
+    due = DateField("Due Date")
     submit = SubmitField("Add Project")

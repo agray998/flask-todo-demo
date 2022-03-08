@@ -1,0 +1,220 @@
+============================= test session starts ==============================
+platform linux -- Python 3.6.9, pytest-7.0.1, pluggy-1.0.0 -- /home/a_gray_4797/flask-todo-demo/venv/bin/python3
+cachedir: .pytest_cache
+rootdir: /home/a_gray_4797/flask-todo-demo
+plugins: cov-3.0.0
+collecting ... collected 6 items
+
+tests/test_app.py::TestHome::test_home_get PASSED                        [ 16%]
+tests/test_app.py::TestAddTodo::test_create_get PASSED                   [ 33%]
+tests/test_app.py::TestAddTodo::test_create_post PASSED                  [ 50%]
+tests/test_int.py::TestBase::test_server_running PASSED                  [ 66%]
+tests/test_int.py::TestAddProject::test_add_proj FAILED                  [ 83%]
+tests/test_int.py::TestAddProject::test_server_running PASSED            [100%]
+
+=================================== FAILURES ===================================
+_________________________ TestAddProject.test_add_proj _________________________
+
+self = <test_int.TestAddProject testMethod=test_add_proj>
+
+    def test_add_proj(self):
+        for case in self.TEST_CASES:
+>           self.submit_input(case)
+
+tests/test_int.py:48: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_int.py:43: in submit_input
+    self.driver.find_element_by_xpath('/html/body/div/form/input[3]').send_keys(str(case[1]).replace('-',''))
+venv/lib/python3.6/site-packages/selenium/webdriver/remote/webdriver.py:394: in find_element_by_xpath
+    return self.find_element(by=By.XPATH, value=xpath)
+venv/lib/python3.6/site-packages/selenium/webdriver/remote/webdriver.py:978: in find_element
+    'value': value})['value']
+venv/lib/python3.6/site-packages/selenium/webdriver/remote/webdriver.py:321: in execute
+    self.error_handler.check_response(response)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <selenium.webdriver.remote.errorhandler.ErrorHandler object at 0x7fe2d7a226d8>
+response = {'status': 404, 'value': '{"value":{"error":"no such element","message":"no such element: Unable to locate element: {\...\\n#16 0x55c609dbd60c \\u003Cunknown>\\n#17 0x55c609dd6c6d \\u003Cunknown>\\n#18 0x7ff6f30d96db \\u003Cunknown>\\n"}}'}
+
+    def check_response(self, response):
+        """
+        Checks that a JSON response from the WebDriver does not have an error.
+    
+        :Args:
+         - response - The JSON response from the WebDriver server as a dictionary
+           object.
+    
+        :Raises: If the response contains an error message.
+        """
+        status = response.get('status', None)
+        if status is None or status == ErrorCode.SUCCESS:
+            return
+        value = None
+        message = response.get("message", "")
+        screen = response.get("screen", "")
+        stacktrace = None
+        if isinstance(status, int):
+            value_json = response.get('value', None)
+            if value_json and isinstance(value_json, basestring):
+                import json
+                try:
+                    value = json.loads(value_json)
+                    if len(value.keys()) == 1:
+                        value = value['value']
+                    status = value.get('error', None)
+                    if status is None:
+                        status = value["status"]
+                        message = value["value"]
+                        if not isinstance(message, basestring):
+                            value = message
+                            message = message.get('message')
+                    else:
+                        message = value.get('message', None)
+                except ValueError:
+                    pass
+    
+        exception_class = ErrorInResponseException
+        if status in ErrorCode.NO_SUCH_ELEMENT:
+            exception_class = NoSuchElementException
+        elif status in ErrorCode.NO_SUCH_FRAME:
+            exception_class = NoSuchFrameException
+        elif status in ErrorCode.NO_SUCH_WINDOW:
+            exception_class = NoSuchWindowException
+        elif status in ErrorCode.STALE_ELEMENT_REFERENCE:
+            exception_class = StaleElementReferenceException
+        elif status in ErrorCode.ELEMENT_NOT_VISIBLE:
+            exception_class = ElementNotVisibleException
+        elif status in ErrorCode.INVALID_ELEMENT_STATE:
+            exception_class = InvalidElementStateException
+        elif status in ErrorCode.INVALID_SELECTOR \
+                or status in ErrorCode.INVALID_XPATH_SELECTOR \
+                or status in ErrorCode.INVALID_XPATH_SELECTOR_RETURN_TYPER:
+            exception_class = InvalidSelectorException
+        elif status in ErrorCode.ELEMENT_IS_NOT_SELECTABLE:
+            exception_class = ElementNotSelectableException
+        elif status in ErrorCode.ELEMENT_NOT_INTERACTABLE:
+            exception_class = ElementNotInteractableException
+        elif status in ErrorCode.INVALID_COOKIE_DOMAIN:
+            exception_class = InvalidCookieDomainException
+        elif status in ErrorCode.UNABLE_TO_SET_COOKIE:
+            exception_class = UnableToSetCookieException
+        elif status in ErrorCode.TIMEOUT:
+            exception_class = TimeoutException
+        elif status in ErrorCode.SCRIPT_TIMEOUT:
+            exception_class = TimeoutException
+        elif status in ErrorCode.UNKNOWN_ERROR:
+            exception_class = WebDriverException
+        elif status in ErrorCode.UNEXPECTED_ALERT_OPEN:
+            exception_class = UnexpectedAlertPresentException
+        elif status in ErrorCode.NO_ALERT_OPEN:
+            exception_class = NoAlertPresentException
+        elif status in ErrorCode.IME_NOT_AVAILABLE:
+            exception_class = ImeNotAvailableException
+        elif status in ErrorCode.IME_ENGINE_ACTIVATION_FAILED:
+            exception_class = ImeActivationFailedException
+        elif status in ErrorCode.MOVE_TARGET_OUT_OF_BOUNDS:
+            exception_class = MoveTargetOutOfBoundsException
+        elif status in ErrorCode.JAVASCRIPT_ERROR:
+            exception_class = JavascriptException
+        elif status in ErrorCode.SESSION_NOT_CREATED:
+            exception_class = SessionNotCreatedException
+        elif status in ErrorCode.INVALID_ARGUMENT:
+            exception_class = InvalidArgumentException
+        elif status in ErrorCode.NO_SUCH_COOKIE:
+            exception_class = NoSuchCookieException
+        elif status in ErrorCode.UNABLE_TO_CAPTURE_SCREEN:
+            exception_class = ScreenshotException
+        elif status in ErrorCode.ELEMENT_CLICK_INTERCEPTED:
+            exception_class = ElementClickInterceptedException
+        elif status in ErrorCode.INSECURE_CERTIFICATE:
+            exception_class = InsecureCertificateException
+        elif status in ErrorCode.INVALID_COORDINATES:
+            exception_class = InvalidCoordinatesException
+        elif status in ErrorCode.INVALID_SESSION_ID:
+            exception_class = InvalidSessionIdException
+        elif status in ErrorCode.UNKNOWN_METHOD:
+            exception_class = UnknownMethodException
+        else:
+            exception_class = WebDriverException
+        if value == '' or value is None:
+            value = response['value']
+        if isinstance(value, basestring):
+            if exception_class == ErrorInResponseException:
+                raise exception_class(response, value)
+            raise exception_class(value)
+        if message == "" and 'message' in value:
+            message = value['message']
+    
+        screen = None
+        if 'screen' in value:
+            screen = value['screen']
+    
+        stacktrace = None
+        if 'stackTrace' in value and value['stackTrace']:
+            stacktrace = []
+            try:
+                for frame in value['stackTrace']:
+                    line = self._value_or_default(frame, 'lineNumber', '')
+                    file = self._value_or_default(frame, 'fileName', '<anonymous>')
+                    if line:
+                        file = "%s:%s" % (file, line)
+                    meth = self._value_or_default(frame, 'methodName', '<anonymous>')
+                    if 'className' in frame:
+                        meth = "%s.%s" % (frame['className'], meth)
+                    msg = "    at %s (%s)"
+                    msg = msg % (meth, file)
+                    stacktrace.append(msg)
+            except TypeError:
+                pass
+        if exception_class == ErrorInResponseException:
+            raise exception_class(response, message)
+        elif exception_class == UnexpectedAlertPresentException:
+            alert_text = None
+            if 'data' in value:
+                alert_text = value['data'].get('text')
+            elif 'alert' in value:
+                alert_text = value['alert'].get('text')
+            raise exception_class(message, screen, stacktrace, alert_text)
+>       raise exception_class(message, screen, stacktrace)
+E       selenium.common.exceptions.NoSuchElementException: Message: no such element: Unable to locate element: {"method":"xpath","selector":"/html/body/div/form/input[3]"}
+E         (Session info: headless chrome=99.0.4844.51)
+
+venv/lib/python3.6/site-packages/selenium/webdriver/remote/errorhandler.py:242: NoSuchElementException
+----------------------------- Captured stdout call -----------------------------
+ * Serving Flask app 'application' (lazy loading)
+ * Environment: production
+   WARNING: This is a development server. Do not use it in a production deployment.
+   Use a production WSGI server instead.
+ * Debug mode: on
+----------------------------- Captured stderr call -----------------------------
+Traceback (most recent call last):
+  File "/home/a_gray_4797/flask-todo-demo/venv/lib/python3.6/site-packages/flask/app.py", line 2091, in __call__
+    return self.wsgi_app(environ, start_response)
+  File "/home/a_gray_4797/flask-todo-demo/venv/lib/python3.6/site-packages/flask/app.py", line 2076, in wsgi_app
+    response = self.handle_exception(e)
+  File "/home/a_gray_4797/flask-todo-demo/venv/lib/python3.6/site-packages/flask/app.py", line 2073, in wsgi_app
+    response = self.full_dispatch_request()
+  File "/home/a_gray_4797/flask-todo-demo/venv/lib/python3.6/site-packages/flask/app.py", line 1518, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "/home/a_gray_4797/flask-todo-demo/venv/lib/python3.6/site-packages/flask/app.py", line 1516, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "/home/a_gray_4797/flask-todo-demo/venv/lib/python3.6/site-packages/flask/app.py", line 1502, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**req.view_args)
+  File "/home/a_gray_4797/flask-todo-demo/application/routes.py", line 50, in create_project
+    if not form.validate_on_submit():
+  File "/home/a_gray_4797/flask-todo-demo/venv/lib/python3.6/site-packages/flask_wtf/form.py", line 86, in validate_on_submit
+    return self.is_submitted() and self.validate()
+  File "/home/a_gray_4797/flask-todo-demo/venv/lib/python3.6/site-packages/wtforms/form.py", line 329, in validate
+    return super().validate(extra)
+  File "/home/a_gray_4797/flask-todo-demo/venv/lib/python3.6/site-packages/wtforms/form.py", line 146, in validate
+    if not field.validate(self, extra):
+  File "/home/a_gray_4797/flask-todo-demo/venv/lib/python3.6/site-packages/wtforms/fields/core.py", line 242, in validate
+    stop_validation = self._run_validation_chain(form, chain)
+  File "/home/a_gray_4797/flask-todo-demo/venv/lib/python3.6/site-packages/wtforms/fields/core.py", line 262, in _run_validation_chain
+    validator(form, self)
+  File "/home/a_gray_4797/flask-todo-demo/application/forms.py", line 20, in __call__
+    if field.data < date.today():
+TypeError: '<' not supported between instances of 'NoneType' and 'datetime.date'
+=========================== short test summary info ============================
+FAILED tests/test_int.py::TestAddProject::test_add_proj - selenium.common.exc...
+========================= 1 failed, 5 passed in 5.31s ==========================

@@ -32,15 +32,16 @@ class TestBase(LiveServerTestCase):
     
     def test_server_running(self):
         response = urlopen('http://localhost:5050/create-proj')
-        self.assert200(response)
+        self.assertEqual(response.code, 200)
     
 class TestAddProject(TestBase):
     TEST_CASES = ('Project 1', date.today() + timedelta(30)), ('Project 2', date.today() + timedelta(14))
 
     def submit_input(self, case):
-        self.driver.find_element_by_xpath('html/body/div/form/input[2]').send_keys(case[0])
-        self.driver.find_element_by_xpath('html/body/div/form/input[3]').send_keys(case[1])
-        self.driver.find_element_by_xpath('html/body/div/form/input[4]').click()
+        self.driver.find_element_by_xpath('/html/body/div/form/input[2]').send_keys(case[0])
+        self.driver.find_element_by_xpath('/html/body/div/form/input[3]').click()
+        self.driver.find_element_by_xpath('/html/body/div/form/input[3]').send_keys(str(case[1]).replace('-',''))
+        self.driver.find_element_by_xpath('//*[@id="submit"]').click()
 
     def test_add_proj(self):
         for case in self.TEST_CASES:
